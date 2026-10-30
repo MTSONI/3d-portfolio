@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type FC } from "react";
+import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import {
   CONTACT_EMAIL,
@@ -29,24 +30,19 @@ export const Footer: FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-        className="mt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8"
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="mt-12 flex flex-col md:flex-row md:items-end justify-between gap-8"
       >
-        <div>
-          <div className="flex items-center gap-2 text-base font-semibold tracking-tight text-white">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-royal to-coral text-white text-sm font-black">
-              H
-            </span>
-            <span>{HERO_NAME}</span>
-          </div>
-          <p className="mt-3 text-sm text-neutral-400 max-w-sm">
-            Building scalable web & mobile products with care. Reach out at{" "}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-white hover:text-coral transition-colors"
-            >
-              {CONTACT_EMAIL}
-            </a>
+        <div className="space-y-4 max-w-md">
+          <p className="text-eyebrow">Get in touch</p>
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="block text-2xl md:text-3xl font-bold hover:text-coral transition-colors"
+          >
+            {CONTACT_EMAIL}
+          </a>
+          <p className="text-neutral-400 text-sm">
+            Available for select freelance, contract and advisory roles.
           </p>
         </div>
 
@@ -64,7 +60,13 @@ export const Footer: FC = () => {
                 transition={{ duration: 0.5, delay: 0.3 + i * 0.08 }}
                 className="h-10 w-10 rounded-full border border-white/10 bg-white/[0.04] flex items-center justify-center hover:bg-white/[0.1] hover:border-white/30 transition-colors"
               >
-                <img src={social.icon} alt="" loading="lazy" decoding="async" className="w-4 h-4" />
+                <Image
+                  src={social.icon}
+                  alt={social.name}
+                  width={16}
+                  height={16}
+                  className="w-4 h-4"
+                />
               </motion.a>
             ))}
           </div>
@@ -84,7 +86,7 @@ export const Footer: FC = () => {
         transition={{ duration: 0.8, delay: 0.5 }}
         className="mt-16 text-center text-[20vw] md:text-[14rem] font-black leading-none text-white/[0.03] select-none"
       >
-        HASNAIN
+        {HERO_NAME.split(" ")[0].toUpperCase()}
       </motion.p>
     </footer>
   );

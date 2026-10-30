@@ -1,43 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SCENE_CAPABILITY_CONFIG } from "@/constants/scene-config";
 
-const MIN_VIEWPORT = 854;
-const MIN_CORES = 4;
-const MIN_MEMORY_GB = 4;
 const IDLE_TIMEOUT_MS = 2000;
-
-/** Highest stage handed out by {@link useDeferred3D}. */
 const LAST_STAGE = 1;
 
 /**
- * Renderer names that mean WebGL is being rasterised by the CPU. Driving a
- * full-screen scene through one of these costs seconds of main-thread time per
- * frame, so those visitors get the painted fallback instead.
+ * Renderer names that mean WebGL is being rasterised by the CPU.
  */
 const SOFTWARE_RENDERER =
   /swiftshader|llvmpipe|softpipe|software|basic render|mesa offscreen/i;
 
 type NavigatorWithMemory = Navigator & { deviceMemory?: number };
 
-const isCapableDevice = () => {
-  if (typeof window === "undefined") return false;
-
-  const viewport = window.matchMedia(`(min-width: ${MIN_VIEWPORT}px)`);
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-  if (!viewport.matches || reducedMotion.matches) return false;
-
-  const nav = navigator as NavigatorWithMemory;
-  const cores = nav.hardwareConcurrency ?? MIN_CORES;
-  const memory = nav.deviceMemory ?? MIN_MEMORY_GB;
-
-  return cores >= MIN_CORES && memory >= MIN_MEMORY_GB;
-};
-
 let hardwareWebGL: boolean | undefined;
 
-const hasHardwareWebGL = () => {
+export const hasHardwareWebGL = (): boolean => {
+  if (typeof window === "undefined") return false;
   if (hardwareWebGL !== undefined) return hardwareWebGL;
 
   const canvas = document.createElement("canvas");
@@ -55,12 +35,20 @@ const hasHardwareWebGL = () => {
 
   gl.getExtension("WEBGL_lose_context")?.loseContext();
 
-  // failIfMajorPerformanceCaveat is not usable here: it still hands back a
-  // context under SwiftShader while rejecting some genuinely accelerated
-  // setups. The renderer name is the reliable signal, and a browser that hides
-  // it for fingerprinting reasons is trusted rather than downgraded.
   hardwareWebGL = renderer ? !SOFTWARE_RENDERER.test(renderer) : true;
   return hardwareWebGL;
+};
+
+const isCapableHardware = () => {
+  if (typeof window === "undefined") return false;
+  const nav = navigator as NavigatorWithMemory;
+  const cores = nav.hardwareConcurrency ?? SCENE_CAPABILITY_CONFIG.minCores;
+  const memory = nav.deviceMemory ?? SCENE_CAPABILITY_CONFIG.minMemoryGB;
+
+  return (
+    cores >= SCENE_CAPABILITY_CONFIG.minCores &&
+    memory >= SCENE_CAPABILITY_CONFIG.minMemoryGB
+  );
 };
 
 const whenIdle = (run: () => void) => {
@@ -75,10 +63,6 @@ const whenIdle = (run: () => void) => {
   return () => window.clearTimeout(handle);
 };
 
-// Every WebGL surface costs a renderer, a context and a round of shader links.
-// Mounting them together packs that into one long task, so the stages are
-// unlocked one idle callback apart and each scene waits for the thread to go
-// quiet again before it claims its share.
 let unlocked = -1;
 let scheduled = false;
 const listeners = new Set<() => void>();
@@ -102,43 +86,96 @@ const scheduleStages = () => {
   }
 };
 
-const useStagedFlag = (stage: number, test: () => boolean) => {
+/**
+ * Gates a WebGL scene behind load, an idle main thread, a capable device and a
+ * hardware renderer.
+ * Stage 0: Hero 3D Scene.
+ * Stage 1: Themed Globe Scene (falls back to CSS GlobePoster if deferred/disabled).
+ */
+export const useDeferred3D = (stage = 0): boolean => {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
+    const test = () => {
+      if (typeof window === "undefined") return false;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      if (reducedMotion.matches) return false;
+      if (!hasHardwareWebGL() || !isCapableHardware()) return false;
+
+      const isDesktop = window.matchMedia(
+        `(min-width: ${SCENE_CAPABILITY_CONFIG.desktopMinViewport}px)`
+      ).matches;
+
+      if (stage === 0) {
+        return isDesktop || SCENE_CAPABILITY_CONFIG.enableHeroOnMobile;
+      }
+
+      return isDesktop || SCENE_CAPABILITY_CONFIG.enableGlobeOnMobile;
+    };
+
     const sync = () => setEnabled(unlocked >= stage && test());
 
     listeners.add(sync);
     scheduleStages();
     const cancelCatchUp = whenIdle(sync);
 
-    const viewport = window.matchMedia(`(min-width: ${MIN_VIEWPORT}px)`);
+    const viewport = window.matchMedia(
+      `(min-width: ${SCENE_CAPABILITY_CONFIG.desktopMinViewport}px)`
+    );
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
     viewport.addEventListener("change", sync);
+    motionQuery.addEventListener("change", sync);
 
     return () => {
       listeners.delete(sync);
       cancelCatchUp();
       viewport.removeEventListener("change", sync);
+      motionQuery.removeEventListener("change", sync);
     };
-    // `test` is a stable module-level predicate.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
 
   return enabled;
 };
 
 /**
- * Gates a WebGL scene behind load, an idle main thread, a capable device and a
- * hardware renderer. `stage` orders the scenes: stage 0 mounts first, each
- * later stage waits for another idle callback so their start-up costs never
- * share a task.
+ * Gates decorative parallax images behind load, hardware headroom, and non-reduced motion.
  */
-export const useDeferred3D = (stage = 0): boolean =>
-  useStagedFlag(stage, () => isCapableDevice() && hasHardwareWebGL());
+export const useDeferredLayers = (): boolean => {
+  const [enabled, setEnabled] = useState(false);
 
-/**
- * Gates the decorative parallax images. They are plain layers moved by
- * composited transforms, so they only need a wide viewport and a device with
- * some headroom - not a GPU that can carry a WebGL scene.
- */
-export const useDeferredLayers = (): boolean => useStagedFlag(0, isCapableDevice);
+  useEffect(() => {
+    const test = () => {
+      if (typeof window === "undefined") return false;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      if (reducedMotion.matches) return false;
+      const viewport = window.matchMedia(
+        `(min-width: ${SCENE_CAPABILITY_CONFIG.layersMinViewport}px)`
+      );
+      return viewport.matches && isCapableHardware();
+    };
+
+    const sync = () => setEnabled(unlocked >= 0 && test());
+
+    listeners.add(sync);
+    scheduleStages();
+    const cancelCatchUp = whenIdle(sync);
+
+    const viewport = window.matchMedia(
+      `(min-width: ${SCENE_CAPABILITY_CONFIG.layersMinViewport}px)`
+    );
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    viewport.addEventListener("change", sync);
+    motionQuery.addEventListener("change", sync);
+
+    return () => {
+      listeners.delete(sync);
+      cancelCatchUp();
+      viewport.removeEventListener("change", sync);
+      motionQuery.removeEventListener("change", sync);
+    };
+  }, []);
+
+  return enabled;
+};

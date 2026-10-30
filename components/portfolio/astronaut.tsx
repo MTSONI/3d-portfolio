@@ -4,6 +4,7 @@ import { useEffect, useRef, type FC } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useMotionValue, useSpring } from "motion/react";
 import { useFrame } from "@react-three/fiber";
+import { HERO_3D_CONFIG } from "@/constants/scene-config";
 import { type AstronautProps } from "@/types/portfolio-types";
 import {
   type BufferGeometry,
@@ -15,9 +16,7 @@ import {
 
 export const Astronaut: FC<AstronautProps> = (props) => {
   const group = useRef<Group>(null);
-  const { nodes, materials, animations } = useGLTF(
-    "/models/astronaut.glb"
-  );
+  const { nodes, materials, animations } = useGLTF(HERO_3D_CONFIG.modelPath);
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
@@ -55,8 +54,8 @@ export const Astronaut: FC<AstronautProps> = (props) => {
       {...props}
       dispose={null}
       rotation={[-Math.PI / 2, -0.2, 2.2]}
-      scale={props.scale ?? 0.3}
-      position={props.position ?? [1.3, -1, 0]}
+      scale={props.scale ?? HERO_3D_CONFIG.desktopScale}
+      position={props.position ?? HERO_3D_CONFIG.desktopPosition}
     >
       <group name="Sketchfab_Scene">
         <group name="Sketchfab_model">
@@ -93,4 +92,4 @@ export const Astronaut: FC<AstronautProps> = (props) => {
   );
 };
 
-useGLTF.preload("/models/astronaut.glb");
+useGLTF.preload(HERO_3D_CONFIG.modelPath);

@@ -1,6 +1,7 @@
 "use client";
 
 import { type FC } from "react";
+import Image from "next/image";
 import { motion } from "motion/react";
 import { type ProjectDetailsProps } from "@/types/portfolio-types";
 
@@ -14,8 +15,8 @@ export const ProjectDetails: FC<ProjectDetailsProps> = ({
 }) => {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center w-full h-full overflow-y-auto p-4 backdrop-blur-md bg-black/60"
       onClick={closeModal}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
     >
       <motion.div
         onClick={(e) => e.stopPropagation()}
@@ -29,7 +30,7 @@ export const ProjectDetails: FC<ProjectDetailsProps> = ({
           aria-label="Close"
           className="absolute z-10 p-2 rounded-full top-4 right-4 bg-white/10 hover:bg-white/20 transition-colors"
         >
-          <img src="/assets/close.svg" className="w-5 h-5" alt="" />
+          <Image src="/assets/close.svg" width={20} height={20} className="w-5 h-5" alt="Close" />
         </button>
         <div className="relative h-48 md:h-56 bg-gradient-to-br from-storm to-indigo overflow-hidden rounded-t-3xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(122,87,219,0.4),transparent_55%)]" />

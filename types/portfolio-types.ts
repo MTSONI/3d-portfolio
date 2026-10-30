@@ -1,4 +1,4 @@
-import { type CSSProperties, type HTMLAttributes, type RefObject } from "react";
+import { type HTMLAttributes } from "react";
 
 export interface ProjectTag {
   id: number;
@@ -39,26 +39,30 @@ export interface Review {
   accent: string;
 }
 
-export interface Service {
-  id: number;
-  title: string;
-  description: string;
-  icon: string;
-  bullets: string[];
-}
-
 export interface Stat {
   value: string;
   label: string;
 }
 
-export interface ProjectDetailsProps extends Project {
-  closeModal: () => void;
+export interface Service {
+  id: number;
+  title: string;
+  description: string;
+  bullets: string[];
+  icon: string;
+}
+
+export interface SkillItem {
+  name: string;
 }
 
 export interface AlertProps {
   type: "success" | "danger";
   text: string;
+}
+
+export interface ProjectDetailsProps extends Project {
+  closeModal: () => void;
 }
 
 export interface FlipWordsProps {

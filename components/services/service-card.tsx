@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type FC } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import {
   SERVICE_ACCENTS,
@@ -33,35 +34,37 @@ export const ServiceCard: FC<ServiceCardProps> = ({
   return (
     <div
       ref={ref}
+      style={{
+        top: `calc(7rem + ${index * STACK_OFFSET_REM}rem)`,
+      }}
       className="sticky"
-      style={{ top: `calc(8rem + ${index * STACK_OFFSET_REM}rem)` }}
     >
       <motion.article
         style={{ scale, opacity }}
-        className="relative h-[80vh] overflow-hidden rounded-3xl border border-white/10 bg-midnight md:h-[78vh]"
+        className="glass-strong relative overflow-hidden rounded-3xl p-8 md:p-12"
       >
         <div
-          className={`absolute inset-0 bg-gradient-to-br opacity-30 ${
+          aria-hidden
+          className={`pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gradient-to-br ${
             SERVICE_ACCENTS[index % SERVICE_ACCENTS.length]
-          }`}
+          } blur-[90px]`}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.10),transparent_45%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_90%,rgba(0,0,0,0.5),transparent_45%)]" />
 
-        <div className="relative grid h-full grid-cols-1 gap-8 p-8 md:p-12 lg:grid-cols-12 lg:p-16">
+        <div className="relative grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
           <div className="flex flex-col justify-between lg:col-span-7">
             <div>
-              <div className="flex items-center gap-4">
-                <span className="rounded-full border border-white/20 px-3 py-1 text-[10px] uppercase tracking-[0.4em] text-white/60">
-                  Service {formatCounter(index, total)}
+              <div className="flex items-center gap-3">
+                <span className="text-eyebrow">
+                  {formatCounter(index + 1, total)}
                 </span>
-                <span className="block h-px w-12 bg-white/30" />
+                <span className="h-px w-8 bg-white/20" />
               </div>
 
-              <h3 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight text-white md:text-6xl">
+              <h3 className="text-heading mt-3 text-2xl md:text-3xl lg:text-4xl">
                 {service.title}
               </h3>
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
+
+              <p className="mt-4 text-base leading-relaxed text-neutral-400 md:text-lg">
                 {service.description}
               </p>
             </div>
@@ -77,11 +80,11 @@ export const ServiceCard: FC<ServiceCardProps> = ({
                 {padIndex(index + 1)}
               </span>
               <div className="absolute right-0 top-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-md md:h-20 md:w-20">
-                <img
+                <Image
                   src={service.icon}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
+                  alt={service.title}
+                  width={36}
+                  height={36}
                   className="h-8 w-8 opacity-90 md:h-9 md:w-9"
                 />
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FC } from "react";
+import Image from "next/image";
 import { HireMeButton } from "@/components/navbar/hire-me-button";
 import { MobileMenu } from "@/components/navbar/mobile-menu";
 import { NavBrand } from "@/components/navbar/nav-brand";
@@ -52,10 +53,12 @@ export const Navbar: FC = () => {
             aria-label="Toggle menu"
             aria-expanded={isOpen}
           >
-            <img
+            <Image
               src={isOpen ? "/assets/close.svg" : "/assets/menu.svg"}
+              width={24}
+              height={24}
               className="h-6 w-6"
-              alt=""
+              alt="Menu"
             />
           </button>
         </div>
