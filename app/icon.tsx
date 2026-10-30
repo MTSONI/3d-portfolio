@@ -3,6 +3,7 @@ import { ImageResponse } from "next/og";
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
+/** The lime signal dot on graphite — the Growth Lab mark. */
 export default function Icon() {
   return new ImageResponse(
     (
@@ -14,24 +15,11 @@ export default function Icon() {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: 8,
-          background:
-            "linear-gradient(135deg, #5c33cc 0%, #ca2f8c 55%, #ea4884 100%)",
-          boxShadow: "inset 0 1px 1px rgba(255,255,255,0.35)",
+          background: "#141516",
+          border: "1px solid #34352f",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            color: "white",
-            fontFamily: "system-ui, sans-serif",
-            fontWeight: 800,
-            fontSize: 23,
-            lineHeight: 1,
-            letterSpacing: -1,
-          }}
-        >
-          H
-        </div>
+        <div style={{ width: 12, height: 12, borderRadius: 999, background: "#c8f04a" }} />
       </div>
     ),
     { ...size }

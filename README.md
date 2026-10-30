@@ -1,98 +1,58 @@
-<div align="center">
+# The Growth Lab — Meet Soni
 
-# 3D Developer Portfolio Starter
+Personal growth strategy and execution portfolio: *"I turn complex business problems into measurable growth
+systems."* Built with Next.js 16, React 19, React Three Fiber and Tailwind CSS v4. Fully static — no backend,
+no database, no analytics, no secrets.
 
-**A high-performance, production-ready 3D developer portfolio starter.** Built with Next.js 16, React 19, Three.js, React Three Fiber, Motion, and Tailwind CSS v4.
+## Routes
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
-[![Three.js](https://img.shields.io/badge/Three.js-r184-000000?logo=threedotjs&logoColor=white)](https://threejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
+| Route | Content |
+| --- | --- |
+| `/` | Growth Engine 3D hero, capabilities, interactive method, selected work, Workbench teaser, about, contact |
+| `/work` | All case studies, the Workbench experiment, other analysis work |
+| `/work/wispr-flow-india-growth` | Flagship: independent Wispr Flow India growth analysis and proposed experiment |
+| `/work/shk-global-ventures` | Founder's Office: GTM, pricing, pilot, fundraising |
+| `/work/ai-automation` | WhatsApp agent, prospecting agent, AI Chief of Staff, n8n |
+| `/work/bluestock-financial-intelligence` | Financial intelligence platform architecture |
+| `/work/quick-commerce-unit-economics` | Tier-1 vs Tier-2 quick-commerce research |
+| `/work/myntra-profitability-analysis` | Synthetic-data returns and assortment analysis |
+| `/work/legal-document-workbench` | Product experiment with a simulated walkthrough |
+| `/about`, `/contact` | Profile and direct contact links |
 
-</div>
+## Evidence labels
 
----
+Every figure on the site carries a label: Primary source, Third-party estimate, Reported, Modelled, Synthetic
+data, Hypothesis or Proposed. The internal register is [`docs/CLAIMS_AUDIT.md`](docs/CLAIMS_AUDIT.md) — read it
+before changing any number.
 
-## Highlights
+## Where things live
 
-- **Interactive 3D Hero:** Rigged 3D astronaut character with smooth floating physics and cursor-responsive camera rig powered by React Three Fiber and Drei.
-- **Dynamic Shader Globe:** Custom GLSL spike mesh and orbiting light spheres that travel across 6 page sections in sync with user scrolling.
-- **Hardware-Aware Performance:** Automatic WebGL capability detection, device pixel ratio clamping, frameloop throttling, and zero-GPU static CSS poster fallbacks.
-- **Scroll & UI Animations:** Pinned horizontal showcase on desktop, 2.5D parallax hero landscape, infinite marquee skill tickers, and interactive contact particle field.
-- **100% Static & Self-Contained:** Zero external databases, zero authentication servers, zero paid third-party dependencies, and zero secrets required to build or run.
-- **Production SEO Out of the Box:** Open Graph, Twitter cards, JSON-LD structured data (`Person`, `WebSite`, `ProfilePage`, `ProfessionalService`), automated sitemap, and robots.txt.
-- **Emergent Ready:** Cleanly modularized and documented in [`EMERGENT_IMPORT_GUIDE.md`](EMERGENT_IMPORT_GUIDE.md) for instant import and customization by AI coding agents.
+| Area | Path |
+| --- | --- |
+| Brand, navigation, capabilities, method copy | `constants/site-constants.ts` |
+| Case-study index (cards, evidence) | `constants/work-constants.ts` |
+| Contact details | `constants/social-constants.ts` |
+| Case-study pages | `components/cases/` |
+| Diagrams and visuals (SVG) | `components/visuals/` |
+| Growth Engine scene | `components/growth-engine/`, `constants/growth-engine-constants.ts` |
+| 3D gating (mobile poster, reduced motion, WebGL) | `constants/scene-config.ts`, `hooks/use-deferred-3d.ts` |
+| Design tokens | `app/globals.css` |
 
----
+The live Growth Engine runs on desktops with hardware WebGL. Phones, reduced-motion users and software
+renderers get the static poster (`public/assets/growth-engine/`). Preview a single beat in development with
+`/?engine-t=1.5&engine-converge=0.5`.
 
-## Quick Start
-
-### 1. Clone & Install
+## Develop
 
 ```bash
-git clone https://github.com/MTSONI/3d-portfolio.git
-cd 3d-portfolio
 npm install
-```
-
-### 2. Run Locally
-
-```bash
 npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 3. Build & Test
-
-```bash
-# Type check and lint (0 errors, 0 warnings)
 npm run lint
-
-# Compile optimized static production build
 npm run build
-
-# Preview production build locally
-npm run start
 ```
 
----
+Set `NEXT_PUBLIC_SITE_URL` to the production origin so canonical URLs, the sitemap and Open Graph tags are
+absolute.
 
-## Customization
-
-All copy, project data, social links, theme colors, and 3D parameters live in typed files under `constants/`. You do not need to modify component code to personalize the portfolio.
-
-| Domain | File | Purpose |
-| :--- | :--- | :--- |
-| **3D Scene Config** | `constants/scene-config.ts` | 3D model paths, camera coordinates, scale, and mobile gating |
-| **Hero & Identity** | `constants/hero-constants.ts` | Name, title, location, hero tagline, and metrics |
-| **Globe Shaders** | `constants/globe-constants.ts` | Shader colors, spike geometry counts, and section pathing |
-| **Projects** | `constants/projects-constants.ts` | Case studies, tags, project links, and screenshots |
-| **Services** | `constants/services-constants.ts` | Service offerings, descriptions, and bullet points |
-| **Experience** | `constants/experience-constants.ts` | Work history and milestones |
-| **Testimonials** | `constants/reviews-constants.ts` | Client recommendations and quotes |
-| **Skills & Tech** | `constants/skills-constants.ts` | Marquee skill items and category pills |
-| **Socials & Email** | `constants/social-constants.ts` | Social media URLs and contact email |
-| **Theme Colors** | `app/globals.css` | Tailwind v4 `@theme` design tokens and color palette |
-
-For complete architectural details and Emergent instructions, refer to [`EMERGENT_IMPORT_GUIDE.md`](EMERGENT_IMPORT_GUIDE.md).
-
----
-
-## Deployment
-
-Because this starter compiles to 100% static output, you can deploy it to any static hosting platform with zero configuration:
-
-- **Vercel:** Import repository and click Deploy.
-- **Netlify:** Build command: `npm run build`, Publish directory: `.next`.
-- **Cloudflare Pages / GitHub Pages / AWS S3:** Standard static Next.js deployment.
-
----
-
-## Credits & Licensing
-
-- **Code:** Licensed under [MIT](LICENSE).
-- **3D Model (`public/models/astronaut.glb`):** Third-party fan art sourced from Sketchfab under Creative Commons Attribution (see [`NOTICE`](NOTICE)).
-- **Icons & Logos:** Brand marks belong to their respective owners.
+On Windows, Turbopack fails on very long folder paths. Either clone to a short path (for example `C:\code`) or
+run `npx next dev --webpack` / `npx next build --webpack`.

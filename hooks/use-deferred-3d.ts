@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { SCENE_CAPABILITY_CONFIG } from "@/constants/scene-config";
 
 const IDLE_TIMEOUT_MS = 2000;
-const LAST_STAGE = 1;
 
 /**
  * Renderer names that mean WebGL is being rasterised by the CPU.
@@ -51,131 +50,89 @@ const isCapableHardware = () => {
   );
 };
 
+const desktopQuery = () =>
+  window.matchMedia(`(min-width: ${SCENE_CAPABILITY_CONFIG.desktopMinViewport}px)`);
+
+const motionQuery = () => window.matchMedia("(prefers-reduced-motion: reduce)");
+
+/**
+ * Whether this device and viewport should ever get the live hero scene,
+ * regardless of whether it has been unlocked yet.
+ */
+const isSceneSupported = (): boolean => {
+  if (typeof window === "undefined") return false;
+  if (motionQuery().matches) return false;
+  if (!hasHardwareWebGL() || !isCapableHardware()) return false;
+  return desktopQuery().matches || SCENE_CAPABILITY_CONFIG.enableHeroOnMobile;
+};
+
 const whenIdle = (run: () => void) => {
   if (typeof window.requestIdleCallback === "function") {
-    const handle = window.requestIdleCallback(run, {
-      timeout: IDLE_TIMEOUT_MS,
-    });
+    const handle = window.requestIdleCallback(run, { timeout: IDLE_TIMEOUT_MS });
     return () => window.cancelIdleCallback(handle);
   }
-
   const handle = window.setTimeout(run, 200);
   return () => window.clearTimeout(handle);
 };
 
-let unlocked = -1;
-let scheduled = false;
-const listeners = new Set<() => void>();
-
-const advance = () => {
-  unlocked += 1;
-  for (const listener of listeners) listener();
-  if (unlocked < LAST_STAGE) whenIdle(advance);
-};
-
-const scheduleStages = () => {
-  if (scheduled) return;
-  scheduled = true;
-
-  const begin = () => whenIdle(advance);
-
-  if (document.readyState === "complete") {
-    begin();
-  } else {
-    window.addEventListener("load", begin, { once: true });
-  }
+/** Re-run `sync` whenever the viewport or motion preference changes. */
+const watchCapability = (sync: () => void) => {
+  const viewport = desktopQuery();
+  const motion = motionQuery();
+  viewport.addEventListener("change", sync);
+  motion.addEventListener("change", sync);
+  return () => {
+    viewport.removeEventListener("change", sync);
+    motion.removeEventListener("change", sync);
+  };
 };
 
 /**
- * Gates a WebGL scene behind load, an idle main thread, a capable device and a
- * hardware renderer.
- * Stage 0: Hero 3D Scene.
- * Stage 1: Themed Globe Scene (falls back to CSS GlobePoster if deferred/disabled).
+ * Gates the WebGL hero behind page load, an idle main thread, a capable device
+ * and a hardware renderer, so the scene never competes with first paint.
  */
-export const useDeferred3D = (stage = 0): boolean => {
+export const useDeferred3D = (): boolean => {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    const test = () => {
-      if (typeof window === "undefined") return false;
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-      if (reducedMotion.matches) return false;
-      if (!hasHardwareWebGL() || !isCapableHardware()) return false;
+    let unlocked = false;
+    const sync = () => setEnabled(unlocked && isSceneSupported());
+    let cancelIdle = () => {};
 
-      const isDesktop = window.matchMedia(
-        `(min-width: ${SCENE_CAPABILITY_CONFIG.desktopMinViewport}px)`
-      ).matches;
-
-      if (stage === 0) {
-        return isDesktop || SCENE_CAPABILITY_CONFIG.enableHeroOnMobile;
-      }
-
-      return isDesktop || SCENE_CAPABILITY_CONFIG.enableGlobeOnMobile;
+    const unlock = () => {
+      cancelIdle = whenIdle(() => {
+        unlocked = true;
+        sync();
+      });
     };
 
-    const sync = () => setEnabled(unlocked >= stage && test());
+    if (document.readyState === "complete") unlock();
+    else window.addEventListener("load", unlock, { once: true });
 
-    listeners.add(sync);
-    scheduleStages();
-    const cancelCatchUp = whenIdle(sync);
-
-    const viewport = window.matchMedia(
-      `(min-width: ${SCENE_CAPABILITY_CONFIG.desktopMinViewport}px)`
-    );
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    viewport.addEventListener("change", sync);
-    motionQuery.addEventListener("change", sync);
-
+    const stopWatching = watchCapability(sync);
     return () => {
-      listeners.delete(sync);
-      cancelCatchUp();
-      viewport.removeEventListener("change", sync);
-      motionQuery.removeEventListener("change", sync);
-    };
-  }, [stage]);
-
-  return enabled;
-};
-
-/**
- * Gates decorative parallax images behind load, hardware headroom, and non-reduced motion.
- */
-export const useDeferredLayers = (): boolean => {
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    const test = () => {
-      if (typeof window === "undefined") return false;
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-      if (reducedMotion.matches) return false;
-      const viewport = window.matchMedia(
-        `(min-width: ${SCENE_CAPABILITY_CONFIG.layersMinViewport}px)`
-      );
-      return viewport.matches && isCapableHardware();
-    };
-
-    const sync = () => setEnabled(unlocked >= 0 && test());
-
-    listeners.add(sync);
-    scheduleStages();
-    const cancelCatchUp = whenIdle(sync);
-
-    const viewport = window.matchMedia(
-      `(min-width: ${SCENE_CAPABILITY_CONFIG.layersMinViewport}px)`
-    );
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    viewport.addEventListener("change", sync);
-    motionQuery.addEventListener("change", sync);
-
-    return () => {
-      listeners.delete(sync);
-      cancelCatchUp();
-      viewport.removeEventListener("change", sync);
-      motionQuery.removeEventListener("change", sync);
+      cancelIdle();
+      window.removeEventListener("load", unlock);
+      stopWatching();
     };
   }, []);
 
   return enabled;
+};
+
+/**
+ * True when the hero will never get its live scene here (phones, reduced
+ * motion, software rendering), so a static poster should stand in. Stays false
+ * on capable desktops, so the poster never flashes ahead of the intro.
+ */
+export const useStaticHeroFallback = (): boolean => {
+  const [fallback, setFallback] = useState(false);
+
+  useEffect(() => {
+    const sync = () => setFallback(!isSceneSupported());
+    sync();
+    return watchCapability(sync);
+  }, []);
+
+  return fallback;
 };

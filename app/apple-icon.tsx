@@ -13,35 +13,18 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background:
-            "linear-gradient(135deg, #5c33cc 0%, #ca2f8c 55%, #ea4884 100%)",
+          background: "#141516",
         }}
       >
         <div
           style={{
-            position: "absolute",
-            top: 18,
-            left: 28,
-            width: 130,
-            height: 130,
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0) 70%)",
+            width: 64,
+            height: 64,
+            borderRadius: 999,
+            background: "#c8f04a",
+            boxShadow: "0 0 60px rgba(200,240,74,0.6)",
           }}
         />
-        <div
-          style={{
-            display: "flex",
-            color: "white",
-            fontFamily: "system-ui, sans-serif",
-            fontWeight: 800,
-            fontSize: 118,
-            lineHeight: 1,
-            letterSpacing: -4,
-          }}
-        >
-          H
-        </div>
       </div>
     ),
     { ...size }
