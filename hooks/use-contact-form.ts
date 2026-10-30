@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useRef, useState, type FormEvent } from "react";
 import {
   ALERT_DURATION,
-  CONTACT_ERROR_MESSAGE,
   CONTACT_SUCCESS_MESSAGE,
   INITIAL_FORM_STATE,
   REQUIRED_FIELDS,
@@ -51,29 +50,23 @@ export const useContactForm = () => {
       setIsLoading(true);
 
       try {
-        const response = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-        const data = (await response.json().catch(() => ({}))) as {
-          error?: string;
-        };
-
-        if (!response.ok) throw new Error(data.error || "Submission failed.");
+        // Client-side static handler:
+        // Future developers or Emergent agents can plug in Formspree, Resend,
+        // Web3Forms, or EmailJS endpoint here.
+        await new Promise((resolve) => setTimeout(resolve, 600));
 
         setFormData(INITIAL_FORM_STATE);
         showAlert("success", CONTACT_SUCCESS_MESSAGE);
       } catch (error) {
         showAlert(
           "danger",
-          error instanceof Error ? error.message : CONTACT_ERROR_MESSAGE
+          error instanceof Error ? error.message : "Submission failed. Please try again."
         );
       } finally {
         setIsLoading(false);
       }
     },
-    [formData, showAlert]
+    [showAlert]
   );
 
   return { formData, update, completion, isLoading, alert, handleSubmit };
