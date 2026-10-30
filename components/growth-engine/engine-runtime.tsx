@@ -11,6 +11,7 @@ import {
 import { useFrame } from "@react-three/fiber";
 import { easing } from "maath";
 import { ENGINE_MODULES } from "@/constants/growth-engine-constants";
+import { windowProgress } from "@/helpers/growth-engine-helpers";
 import { getEngineFocus } from "@/hooks/use-engine-focus";
 import { type HeroScroll } from "@/hooks/use-hero-converge";
 import { type EngineModuleId } from "@/types/growth-engine-types";
@@ -21,6 +22,9 @@ import { type EngineModuleId } from "@/types/growth-engine-types";
  * play the intro at full speed.
  */
 const MAX_STEP = 1 / 10;
+
+/** Intro window over which scroll convergence is phased in. */
+const ASSEMBLED: [number, number] = [1.8, 2.6];
 
 export interface EngineRuntime {
   /** Seconds of intro played. */
@@ -80,8 +84,11 @@ const EngineDriver: FC<DriverProps> = ({ runtimeRef, scrollRef, pointerRef }) =>
 
     engine.t = freeze.t ?? engine.t + Math.min(delta, MAX_STEP);
     engine.scrollY = scroll.scrollY;
+    // Convergence waits for the modules to land, so an early scroll never
+    // closes the engine around parts that haven't assembled yet.
+    const assembled = windowProgress(engine.t, ASSEMBLED);
     if (freeze.converge !== null) engine.converge = freeze.converge;
-    else easing.damp(engine, "converge", scroll.converge, 0.35, delta);
+    else easing.damp(engine, "converge", scroll.converge * assembled, 0.35, delta);
 
     const focused = getEngineFocus();
     for (const { id } of ENGINE_MODULES) {
