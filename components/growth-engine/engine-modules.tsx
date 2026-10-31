@@ -27,17 +27,17 @@ const StrategyModule: FC = () => (
   <EngineModule config={STRATEGY}>
     <Reveal at={[0.6, 1.2]} mode="grow" position={[0.05, TOP, -0.12]}>
       <RoundedBox args={[0.44, 1.1, 0.44]} radius={0.02} position-y={0.55}>
-        <meshStandardMaterial color={C.ivoryWarm} roughness={0.38} metalness={0.25} />
+        <meshStandardMaterial color={C.ivoryWarm} roughness={0.32} metalness={0.3} envMapIntensity={1.3} />
       </RoundedBox>
     </Reveal>
     <Reveal at={[0.75, 1.25]} mode="grow" position={[-0.5, TOP, 0.16]}>
       <RoundedBox args={[0.32, 0.46, 0.32]} radius={0.02} position-y={0.23}>
-        <meshStandardMaterial color={C.copperDeep} roughness={0.45} metalness={0.5} />
+        <meshStandardMaterial color={C.copperDeep} roughness={0.38} metalness={0.55} envMapIntensity={1.2} />
       </RoundedBox>
     </Reveal>
     <Reveal at={[0.85, 1.3]} mode="grow" position={[0.56, TOP, 0.04]}>
       <RoundedBox args={[0.34, 0.58, 0.34]} radius={0.02} position-y={0.29}>
-        <meshStandardMaterial color={C.olive} roughness={0.45} metalness={0.5} />
+        <meshStandardMaterial color={C.olive} roughness={0.38} metalness={0.55} envMapIntensity={1.2} />
       </RoundedBox>
     </Reveal>
     <Reveal at={[1.05, 1.55]} position={[0.05, TOP + 1.1, -0.12]}>
@@ -139,9 +139,10 @@ const GtmModule: FC = () => (
             <meshStandardMaterial
               color={node.color}
               emissive={node.color}
-              emissiveIntensity={node.color === C.copper ? 0.45 : 0.12}
-              roughness={0.25}
-              metalness={0.45}
+              emissiveIntensity={node.color === C.copper ? 0.55 : 0.15}
+              roughness={0.2}
+              metalness={0.5}
+              envMapIntensity={1.3}
             />
           </mesh>
         </Reveal>
@@ -188,7 +189,7 @@ const AutomationModule: FC = () => (
           radius={0.02}
           position-y={tower.height / 2}
         >
-          <meshStandardMaterial color={C.graphiteTower} roughness={0.5} metalness={0.35} />
+          <meshStandardMaterial color={C.graphiteTower} roughness={0.4} metalness={0.45} envMapIntensity={1.1} />
         </RoundedBox>
       </Reveal>
     ))}

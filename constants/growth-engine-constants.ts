@@ -140,7 +140,7 @@ export const ENGINE_CAMERA = {
   /** Push-in from far and high to the resting framing. */
   from: { distance: 21.5, elevation: 0.68, azimuth: -0.1 },
   to: { distance: 14.8, elevation: 0.5, azimuth: -0.24 },
-  pushIn: [0, 2.8] as [number, number],
+  pushIn: [0, 3.2] as [number, number],
   /** Converged framing moves closer and higher to read the integrated engine. */
   converged: { distance: 12.6, elevation: 0.64 },
   /** Framing is tuned at 16:9; narrower canvases dolly out to keep every module in view. */
@@ -151,8 +151,8 @@ export const ENGINE_CAMERA = {
    * if it is ever enabled.
    */
   portrait: { distance: 23, elevation: 0.9, azimuth: 0.3, referenceAspect: 9 / 16 },
-  orbitAmplitude: 0.075,
-  orbitSpeed: 0.16,
+  orbitAmplitude: 0.09,
+  orbitSpeed: 0.14,
   parallax: { azimuth: 0.08, elevation: 0.04 },
   /** How far toward a hovered module the camera leans its aim. */
   focusLean: 0.14,

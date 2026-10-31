@@ -65,8 +65,8 @@ export const EngineCore: FC = () => {
     }
 
     const beat = Math.pow(0.5 + 0.5 * Math.cos((t / HEARTBEAT) * Math.PI * 2), 6);
-    if (shell.current) shell.current.emissiveIntensity = 0.06 + beat * 0.12 * grow;
-    if (light.current) light.current.intensity = (1.2 + beat * 1.4) * Math.max(0.3, grow);
+    if (shell.current) shell.current.emissiveIntensity = 0.08 + beat * 0.18 * grow;
+    if (light.current) light.current.intensity = (1.4 + beat * 1.8) * Math.max(0.3, grow);
   });
 
   return (
@@ -76,7 +76,7 @@ export const EngineCore: FC = () => {
         <cylinderGeometry
           args={[CORE.pedestal.radius * 0.82, CORE.pedestal.radius, CORE.pedestal.height, 48]}
         />
-        <meshStandardMaterial color={C.graphite} roughness={0.42} metalness={0.7} />
+        <meshStandardMaterial color={C.graphite} roughness={0.35} metalness={0.75} envMapIntensity={1.2} />
       </mesh>
       <mesh position-y={CORE.pedestal.height + 0.004} rotation-x={-Math.PI / 2}>
         <ringGeometry args={[CORE.pedestal.radius * 0.6, CORE.pedestal.radius * 0.72, 48]} />
@@ -89,11 +89,12 @@ export const EngineCore: FC = () => {
             <sphereGeometry args={[CORE.radius, 64, 64]} />
             <meshStandardMaterial
               ref={shell}
-              color="#cdc99b"
+              color="#d4d09e"
               emissive={C.lime}
-              emissiveIntensity={0.06}
-              roughness={0.24}
-              metalness={0.35}
+              emissiveIntensity={0.08}
+              roughness={0.18}
+              metalness={0.42}
+              envMapIntensity={1.4}
             />
           </mesh>
           <mesh scale={1.12}>

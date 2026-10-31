@@ -24,15 +24,17 @@ import { useEngine } from "./engine-runtime";
  */
 export const EngineLights: FC = () => (
   <>
-    <hemisphereLight args={["#fff3dc", "#15161a", 0.55]} />
-    <directionalLight position={[4.5, 7, 4]} intensity={2.3} color="#fff1da" />
-    <directionalLight position={[-6, 3.5, -5]} intensity={0.9} color="#d6f27a" />
-    <directionalLight position={[3, 2, -6]} intensity={0.6} color="#ffb27a" />
+    <hemisphereLight args={["#fff3dc", "#12130f", 0.6]} />
+    <directionalLight position={[4.5, 8, 4]} intensity={2.8} color="#fff1da" />
+    <directionalLight position={[-6, 4.5, -5]} intensity={1.1} color="#d6f27a" />
+    <directionalLight position={[3, 2, -6]} intensity={0.7} color="#ffb27a" />
+    <directionalLight position={[0, 6, -3]} intensity={0.4} color="#e8e0c8" />
     <Environment resolution={128} frames={1}>
-      <Lightformer intensity={2.2} position={[0, 6, 2]} rotation-x={Math.PI / 2} scale={[10, 4, 1]} color="#fff4e2" />
-      <Lightformer intensity={1.1} position={[-6, 2, -2]} rotation-y={Math.PI / 2} scale={[6, 2, 1]} color="#d9f28a" />
-      <Lightformer intensity={0.9} position={[6, 1.5, 0]} rotation-y={-Math.PI / 2} scale={[6, 2, 1]} color="#ffb47c" />
-      <Lightformer intensity={0.4} position={[0, -3, 0]} rotation-x={-Math.PI / 2} scale={[12, 12, 1]} color="#1b1c20" />
+      <Lightformer intensity={2.6} position={[0, 7, 2]} rotation-x={Math.PI / 2} scale={[12, 5, 1]} color="#fff4e2" />
+      <Lightformer intensity={1.3} position={[-6, 2, -2]} rotation-y={Math.PI / 2} scale={[6, 3, 1]} color="#d9f28a" />
+      <Lightformer intensity={1.0} position={[6, 1.5, 0]} rotation-y={-Math.PI / 2} scale={[6, 3, 1]} color="#ffb47c" />
+      <Lightformer intensity={0.3} position={[0, -3, 0]} rotation-x={-Math.PI / 2} scale={[14, 14, 1]} color="#18191a" />
+      <Lightformer intensity={0.5} position={[0, 4, -6]} rotation-x={0.3} scale={[8, 2, 1]} color="#e0d5b8" />
     </Environment>
   </>
 );
@@ -59,11 +61,11 @@ const floorFragment = /* glsl */ `
 
     vec2 cell = p * 1.25;
     vec2 grid = abs(fract(cell - 0.5) - 0.5) / fwidth(cell);
-    float line = (1.0 - min(min(grid.x, grid.y), 1.0)) * (1.0 - smoothstep(1.0, 4.0, d));
+    float line = (1.0 - min(min(grid.x, grid.y), 1.0)) * (1.0 - smoothstep(1.0, 4.5, d));
 
     float reveal = uReveal * stage;
-    vec3 color = mix(uBase, uLine, line * 0.12);
-    gl_FragColor = vec4(color, reveal * 0.82);
+    vec3 color = mix(uBase, uLine, line * 0.16);
+    gl_FragColor = vec4(color, reveal * 0.88);
     #include <colorspace_fragment>
   }
 `;
@@ -171,7 +173,7 @@ export const EngineParticles: FC = () => {
   return (
     <instancedMesh ref={mesh} args={[undefined, undefined, MOTES.count]}>
       <sphereGeometry args={[0.04, 16, 16]} />
-      <meshStandardMaterial roughness={0.3} metalness={0.3} emissive="#3a3526" />
+      <meshStandardMaterial roughness={0.25} metalness={0.35} emissive="#4a4530" emissiveIntensity={1.2} />
     </instancedMesh>
   );
 };

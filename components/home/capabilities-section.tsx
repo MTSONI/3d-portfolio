@@ -1,6 +1,7 @@
 import { type FC } from "react";
 import { CapabilityVisual } from "@/components/visuals/capability-visuals";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 import { CAPABILITIES, SUPPORTING_STATEMENT } from "@/constants/site-constants";
 
 const ACCENT: Record<string, string> = {
@@ -27,7 +28,7 @@ export const CapabilitiesSection: FC = () => (
       <ol className="mt-20 divide-y divide-rule border-y border-rule">
         {CAPABILITIES.map((capability, i) => (
           <li key={capability.id} className="grid items-center gap-10 py-14 md:grid-cols-12 md:py-16">
-            <div className={`md:col-span-6 ${i % 2 ? "md:order-2 md:col-start-7" : ""}`}>
+            <RevealOnScroll className={`md:col-span-6 ${i % 2 ? "md:order-2 md:col-start-7" : ""}`}>
               <div className="flex items-baseline gap-5">
                 <span className="font-mono text-sm text-mute">{capability.index}</span>
                 <h3 className={`display text-5xl md:text-6xl ${ACCENT[capability.id]}`}>
@@ -46,14 +47,16 @@ export const CapabilitiesSection: FC = () => (
                   </li>
                 ))}
               </ul>
-            </div>
-            <div
+            </RevealOnScroll>
+            <RevealOnScroll
+              delay={120}
+              scale
               className={`aspect-[32/22] rounded-sm border border-rule bg-graphite p-5 md:col-span-5 ${
                 i % 2 ? "md:order-1 md:col-start-1" : "md:col-start-8"
               }`}
             >
               <CapabilityVisual id={capability.id} />
-            </div>
+            </RevealOnScroll>
           </li>
         ))}
       </ol>

@@ -1,5 +1,7 @@
 import { type FC } from "react";
 import { EvidenceTag } from "@/components/ui/evidence-tag";
+import { ExperimentStepper } from "@/components/visuals/experiment-stepper";
+import { GrowthPipeline } from "@/components/visuals/growth-pipeline";
 import {
   AxesDiagram,
   ExperimentFlow,
@@ -130,6 +132,10 @@ export const WisprCase: FC = () => (
       </p>
     </CaseSection>
 
+    <CaseSection number="—" title="The growth pipeline" aside="Downloads are the beginning, not the outcome.">
+      <GrowthPipeline />
+    </CaseSection>
+
     <CaseSection number="02" title="The customer problem behind the gap" tone="graphite" aside="Why voice is harder than it looks — especially in India.">
       <Prose>
         <p>
@@ -240,21 +246,12 @@ export const WisprCase: FC = () => (
     </CaseSection>
 
     <CaseSection number="06" title="The smallest credible experiment" tone="graphite" aside={<><EvidenceTag kind="proposed" /><p className="mt-3">Designed, not run. No results exist.</p></>}>
-      <Figure caption="Two arms drawn from the same population, identical onboarding, read on day 14.">
+      <ExperimentStepper />
+
+      <Figure className="mt-12" caption="Two arms drawn from the same population, identical onboarding, read on day 14.">
         <ExperimentFlow />
       </Figure>
-      <div className="mt-12">
-        <PointList
-          items={[
-            { title: "Who", body: "Opt-in members of 1–2 college consulting/finance clubs who write daily; laptop or phone. Target 25–40 qualified sign-ups per arm." },
-            { title: "How to recruit", body: "Arm 1: a lead-run 15-minute session. Arm 2: the same link and message posted to a comparable cohort's group. Use different batches or campuses to limit cross-talk." },
-            { title: "Onboarding", body: "Three identical starter tasks: reply to a WhatsApp message in Hinglish, draft a short email, clean up meeting notes. One short consent form." },
-            { title: "Behaviour to observe", body: "Days with dictation, apps used, and whether the first dictation was kept — self-reported in two 1-minute check-ins plus an optional usage screenshot." },
-            { title: "Positive signal", body: "Arm 1 week-2 retention at least 2× Arm 2, and at least 30% of Arm 1 installers active on 3+ days in week 2. Thresholds are my pre-registered choices." },
-            { title: "Invalidation", body: "Arm 1 retention within 1.2× of Arm 2, or under 15% — the introducer adds little, and community-led distribution is not the lever I think it is." },
-          ]}
-        />
-      </div>
+
       <Prose className="mt-12">
         <p>
           <strong>Honest about power:</strong> with 25–40 people per arm, only large differences are readable. Three

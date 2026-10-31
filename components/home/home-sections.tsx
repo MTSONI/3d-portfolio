@@ -3,6 +3,7 @@ import { type FC } from "react";
 import { CasePreview } from "@/components/work/case-preview";
 import { WorkbenchStrip } from "@/components/visuals/workbench-strip";
 import { Arrow, SectionHeading } from "@/components/ui/section-heading";
+import { RevealOnScroll } from "@/components/ui/reveal-on-scroll";
 import {
   CONTACT_EMAIL,
   CONTACT_PHONE,
@@ -27,7 +28,9 @@ export const SelectedWork: FC = () => (
       />
       <div className="mt-16">
         {CASES.map((item, i) => (
-          <CasePreview key={item.slug} item={item} flip={i % 2 === 1} />
+          <RevealOnScroll key={item.slug} delay={i * 80}>
+            <CasePreview item={item} flip={i % 2 === 1} />
+          </RevealOnScroll>
         ))}
       </div>
     </div>
@@ -37,7 +40,7 @@ export const SelectedWork: FC = () => (
 export const WorkbenchTeaser: FC = () => (
   <section aria-labelledby="workbench-title" className="border-t border-rule bg-graphite py-24 md:py-32">
     <div className="lab-container grid gap-12 md:grid-cols-12">
-      <div className="md:col-span-5">
+      <RevealOnScroll className="md:col-span-5">
         <p className="eyebrow text-copper">Featured product thinking · {WORKBENCH.kicker}</p>
         <h2 id="workbench-title" className="display mt-5 text-4xl md:text-5xl">
           {WORKBENCH.title}
@@ -51,10 +54,10 @@ export const WorkbenchTeaser: FC = () => (
         <Link href={`/work/${WORKBENCH.slug}`} className="btn-line mt-8">
           Walk through the workflow <Arrow />
         </Link>
-      </div>
-      <div className="md:col-span-6 md:col-start-7">
+      </RevealOnScroll>
+      <RevealOnScroll delay={150} scale className="md:col-span-6 md:col-start-7">
         <WorkbenchStrip />
-      </div>
+      </RevealOnScroll>
     </div>
   </section>
 );
@@ -62,8 +65,10 @@ export const WorkbenchTeaser: FC = () => (
 export const AboutTeaser: FC = () => (
   <section aria-labelledby="about-title" className="border-t border-rule bg-ink py-24 md:py-32">
     <div className="lab-container grid gap-12 md:grid-cols-12">
-      <p className="eyebrow md:col-span-3 md:pt-3">About</p>
-      <div className="md:col-span-6">
+      <RevealOnScroll className="md:col-span-3 md:pt-3">
+        <p className="eyebrow">About</p>
+      </RevealOnScroll>
+      <RevealOnScroll delay={80} className="md:col-span-6">
         <h2 id="about-title" className="display text-4xl md:text-5xl">
           I like problems that don&apos;t arrive with a brief.
         </h2>
@@ -82,7 +87,7 @@ export const AboutTeaser: FC = () => (
         <Link href="/about" className="mt-8 inline-flex items-center gap-2 text-sm font-semibold hover:text-lime">
           More about me <Arrow />
         </Link>
-      </div>
+      </RevealOnScroll>
       <dl className="grid content-start gap-6 border-t border-rule pt-6 text-sm md:col-span-3 md:border-l md:border-t-0 md:pl-6 md:pt-0">
         {[
           ["Now", "Founder's Office, SHK Global Ventures"],
@@ -111,16 +116,18 @@ export const ContactBlock: FC<{ as?: "h1" | "h2" }> = ({ as: Heading = "h2" }) =
       className="pointer-events-none absolute -right-20 top-1/2 h-[360px] w-[360px] -translate-y-1/2 rounded-full border border-copper/20"
     />
     <div className="lab-container relative">
-      <p className="eyebrow">Contact</p>
-      <Heading id="contact-title" className="display mt-6 max-w-4xl text-5xl md:text-7xl">
-        Have a growth problem worth engineering? <em className="text-lime">Let&apos;s talk.</em>
-      </Heading>
-      <a
-        href={`mailto:${CONTACT_EMAIL}`}
-        className="mt-12 inline-block break-all font-serif text-3xl text-ivory underline decoration-lime/50 underline-offset-8 transition-colors hover:decoration-lime md:text-5xl"
-      >
-        {CONTACT_EMAIL}
-      </a>
+      <RevealOnScroll>
+        <p className="eyebrow">Contact</p>
+        <Heading id="contact-title" className="display mt-6 max-w-4xl text-5xl md:text-7xl">
+          Have a growth problem worth engineering? <em className="text-lime">Let&apos;s talk.</em>
+        </Heading>
+        <a
+          href={`mailto:${CONTACT_EMAIL}`}
+          className="mt-12 inline-block break-all font-serif text-3xl text-ivory underline decoration-lime/50 underline-offset-8 transition-colors hover:decoration-lime md:text-5xl"
+        >
+          {CONTACT_EMAIL}
+        </a>
+      </RevealOnScroll>
       <ul className="mt-12 grid gap-px overflow-hidden rounded-sm border border-rule bg-rule sm:grid-cols-3">
         {[
           { label: "Phone", value: CONTACT_PHONE, href: CONTACT_PHONE_HREF, external: false },
