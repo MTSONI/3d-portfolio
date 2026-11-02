@@ -14,8 +14,8 @@ export const EngineLegend: FC = () => {
   return (
     <ul
       aria-label="Growth engine modules"
-      className="reveal absolute bottom-8 right-8 z-10 hidden flex-col gap-1.5 md:flex"
-      style={{ animationDelay: "calc(var(--intro-delay) + 1.6s)" }}
+      className="animate-reveal absolute bottom-8 right-8 z-10 hidden flex-col gap-1.5 md:flex"
+      style={{ animationDelay: "2.4s" }}
     >
       {ENGINE_MODULES.map((module) => {
         const isActive = active === module.id;

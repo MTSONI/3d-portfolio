@@ -130,7 +130,7 @@ export const GrowthPipeline: FC = () => {
       )}
 
       <p className="mt-5 text-xs text-mute">
-        Hover each stage to see where India's data is known and where the gap is. The experiment
+        Hover each stage to see where India&apos;s data is known and where the gap is. The experiment
         targets <strong className="text-ivory-dim">repeat usage</strong> — the stage between activation and payment.
       </p>
     </div>
